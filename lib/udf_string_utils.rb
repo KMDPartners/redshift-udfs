@@ -2,6 +2,41 @@ class UdfStringUtils
   UDFS = [
       {
           type:        :function,
+          name:        :levenshtein,
+          description: "https://en.wikibooks.org/wiki/Algorithm_Implementation/Strings/Levenshtein_distance#Python",
+          params:      "s1 varchar(max), s2 varchar(max)",
+          return_type: "integer",
+          body:        %~
+            import numpy as np
+        
+            # https://en.wikibooks.org/wiki/Algorithm_Implementation/Strings/Levenshtein_distance#Python
+            def levenshtein(source, target):
+                source = source or ""
+                target = target or ""
+                if len(source) < len(target):
+                  return levenshtein(target, source)
+        
+                if len(target) == 0:
+                  return len(source)
+        
+                source = np.array(tuple(source))
+                target = np.array(tuple(target))
+        
+                previous_row = np.arange(target.size + 1)
+                for s in source:
+                  current_row = previous_row + 1
+                  current_row[1:] = np.minimum(current_row[1:], np.add(previous_row[:-1], target != s))
+                  current_row[1:] = np.minimum( current_row[1:], current_row[0:-1] + 1)
+                  previous_row = current_row
+                return previous_row[-1]
+            return levenshtein(s1, s2)
+          ~,
+          tests:       [
+                           {query: "select ?('bob', 'bob')", expect: 0, example: true},
+                           {query: "select ?('bob', 'boc')", expect: 1, example: true}
+                       ]
+      },{
+          type:        :function,
           name:        :email_name,
           description: "Gets the part of the email address before the @ sign",
           params:      "email varchar(max)",

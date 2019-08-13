@@ -1,6 +1,7 @@
 require 'pg'
 require 'yaml'
 
+
 Dir[File.join(File.dirname(__FILE__), 'lib', '*.rb')].each do |file|
   require_relative File.join('lib', File.basename(file))
 end
@@ -48,6 +49,7 @@ class UdfHarness
     end
     val
   end
+
 
   def connect!
     @conn ||= PG.connect({

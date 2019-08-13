@@ -237,7 +237,7 @@ class UdfJsonArrays
             return True
           ~,
           tests:       [
-                           {query: "select ?('[\"a\",\"c\",\"b\"]'", expect: 'true', example: true},
+                           {query: "select ?('[\"a\",\"c\",\"b\"]')", expect: 'true', example: true},
                            {query: "select ?('blas')", expect: false},
                        ]
       }
